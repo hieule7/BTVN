@@ -1,4 +1,4 @@
----C1
+---C1 (Câu naÌy duÌng EXCEPT ðýõòc không aò taòi em không biêìt code theo caìi ðoì)
 SELECT SalesTerritoryKey,
 SalesTerritoryRegion,
 SalesTerritoryGroup,
@@ -44,13 +44,14 @@ SELECT TOP 3 *
 FROM DimReseller
 WHERE YearOpened >='2001' AND ProductLine='Road'
 ORDER BY AnnualSales DESC
----C9:( Câu naÌy em chýa xong)
+---C9
 SELECT TOP 5
 CONCAT_WS(' ',FirstName,MiddleName,LastName) 'FullName',
-BaseRate 
-FROM DimEmployee
-WHERE Y
-ORDER BY SalesQuotaAmount 
+BaseRate,
+F.SalesAmountQuota
+FROM DimEmployee AS D
+LEFT JOIN FactSalesQuota AS F ON F.EmployeeKey=D.EmployeeKey
+ORDER BY F.SalesAmountQuota DESC
 SELECT *
 FROM DimEmployee
 ---C10
@@ -83,25 +84,13 @@ WHERE D.EnglishEducation = 'Bachelors'
 GROUP BY G.EnglishCountryRegionName 
 ---C13
 SELECT
-MAX(OrderDate) 'NgayMuaGanNhat'
-FROM FactInternetSales
----C14 ( câu naÌy em ðang fix)
-SELECT
-    dpc.EnglishProductCategoryName,
-    dst.SalesTerritoryCountry,
-    SUM(sd.SalesAmount) AS TotalSales
-FROM DimCustomer AS DS
-LEFT JOIN DimSalesTerritory DST ON DST. = DS.GeographyKey
-LEFT JOIN DimProductCategory DPC ON sd.ProductCategoryKey = dpc.ProductCategoryKey
-WHERE
-    sd.OrderDate >= '2011-01-01' AND sd.OrderDate < '2012-01-01'
-    AND sd.Gender = 'M'
-    AND SUM(sd.SalesAmount) > 1000
-GROUP BY
-    dpc.EnglishProductCategoryName,
-    dst.SalesTerritoryCountry
-ORDER BY
-    TotalSales DESC;
+MAX(OrderDate) 'NgayMuaGanNhat',
+DPC.EnglishProductCategoryName
+FROM FactInternetSales AS FIS
+LEFT JOIN DimProduct AS DP ON DP.ProductKey=FIS.ProductKey
+LEFT JOIN DimProductSubcategory AS DPSC ON DPSC.ProductSubcategoryKey=DP.ProductSubcategoryKey
+LEFT JOIN DimProductCategory AS DPC ON DPC.ProductCategoryKey=DPSC.ProductCategoryKey
+GROUP BY DPC.EnglishProductCategoryName
 ---C15
 	SELECT
     ff.FinanceKey,
